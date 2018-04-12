@@ -499,6 +499,7 @@ public class HelloWorld {
 		// socket.shutdownInput();//关闭输入流
 		// socket.close();
 		test1(-3);
+		System.out.println("=============================================");
 		List<Integer> integers = new ArrayList<>();
 		integers.add(3);
 		for (Integer integer2 : integers) {

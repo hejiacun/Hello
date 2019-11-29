@@ -1,3 +1,4 @@
+package com.test;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,18 +35,30 @@ import java.util.TimeZone;
 
 import javax.sql.ConnectionPoolDataSource;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
+//import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.google.common.collect.HashBasedTable;
+//import com.google.common.collect.Table;
+//
+import com.jolly.center.dubbo.enums.DynamicMenuEnum;
+import redis.clients.jedis.Jedis;
 
 import annotation.HelloAnnotation;
+import entity.Student;
 
 @HelloAnnotation(say = "do it")
 public class HelloWorld {
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+	
 	private static String getKey(String pattern, Object... arguments) {
 		return MessageFormat.format(pattern, arguments);
 	}
 
 	public static void main(String[] args) throws ParseException, IOException {
+		ObjectMapper oMapper = new ObjectMapper();
 		System.out.println(9 & (8 - 1));// 按位与
 		Integer sInteger = 100000;
 		int in = 100000;
@@ -125,10 +138,11 @@ public class HelloWorld {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("id", 8);
 		map.put("name", "jay");
-		ObjectMapper oMapper = new ObjectMapper();
-		System.out.println(oMapper.writeValueAsString(map));
-		System.out.println(map.toString());
-		System.out.println(map.hashCode());
+		System.out.println(map.size());
+//		ObjectMapper oMapper = new ObjectMapper();
+//		System.out.println(oMapper.writeValueAsString(map));
+//		System.out.println(map.toString());
+//		System.out.println(map.hashCode());
 		//map的遍历
 		Iterator<Map.Entry<String, Object>> iter = map.entrySet().iterator();
 		while (iter.hasNext()) {
@@ -205,7 +219,7 @@ public class HelloWorld {
 		// // String string2="Ct";
 		// // System.out.println(string.contains(string2));
 		//
-		// // Jedis jedis=new Jedis("localhost");
+		  Jedis jedis=new Jedis("localhost");
 		// // System.out.println("连接成功");
 		// // //Redis Java String(字符串) 实例
 		// // jedis.set("runoobkey", "www.runoob.com");
@@ -514,6 +528,104 @@ public class HelloWorld {
 		}
 		System.out.println("list:"+integers);
 		System.out.println("=============================================");
+		System.out.println(md5("123456"));
+		int team = 21112222;
+		System.out.println(team);
+//		Table<Integer, Integer, Map<String, Object>> table = HashBasedTable.create();//双键Map
+//		table.put(1, 1, map);
+//		table.put(1, 2, map1);
+//		System.out.println(table.get(1, 2));
+		List<String> hello = new ArrayList<>();
+		hello.removeAll(hello);
+		System.out.println("=============================================");
+		Student student1 = new Student(1, "jay1", "qwe");
+		Student student2 = new Student(2, "jay2", "qwe");
+		Student student3 = new Student(3, "jay3", "qwe");
+		Student student4 = new Student(4, "jay4", "qwe");
+		Student student5 = new Student(2, "jay2", "qwe");
+		List<Student> allStudent = new ArrayList<>();
+		allStudent.add(student1);
+		allStudent.add(student2);
+		allStudent.add(student3);
+		allStudent.add(student4);
+		List<Student> boyStudent = new ArrayList<>();
+		boyStudent.add(student4);
+		boyStudent.add(student3);
+		boyStudent.add(student5);
+//		System.out.println(allStudent.removeAll(boyStudent)+" "+allStudent.size());
+		System.out.println("=============================================");
+		map.put("student", allStudent);
+		map.put("list", list);
+		map.put("list1", list1);
+		List<Student> students = json2List(object2Json(map.get("student")), Student.class);
+		List<Map> list2 = json2List(object2Json(map.get("list")), Map.class);
+		List<Map<String, Object>> list3 = json2MapList(object2Json(map.get("list")));
+		List<String> list4 = json2List(object2Json(map.get("list1")), String.class);
+		System.out.println(list3);
+		System.out.println(list2);
+		System.out.println(students);
+		
+		
+		
+		List<Set<Integer>> origin = new ArrayList<>();
+		addSet(origin, 1, 2);
+		addSet(origin, 3, 4);
+		addSet(origin, 5, 6);
+		addSet(origin, 2, 5);
+		addSet(origin, 7, 8);
+		addSet(origin, 1, 4);
+        List<Set<Integer>> result = new ArrayList<>();
+        addSet(result, 1, 2);
+        for (Set<Integer> o : origin) {
+        	Set<Integer> c = new HashSet<>(o);
+        	compare(c, result);
+		}
+        System.out.println(result);
+        System.out.println("=============================================");
+        String string = "{\"gf\":\"hjk\"}";
+        Map<String, Object> map4 = json2Map(string);
+        System.out.println(map4);
+	}
+	
+	private static void compare(Set<Integer> c ,List<Set<Integer>> result) {
+		boolean bool = false;
+		boolean b = false;
+		int a = 0;
+		int index = 0;
+		for (int i = 0; i < result.size(); i++) {
+			Set<Integer> r = result.get(i);
+			if (isIntersected(c,r)) {
+				c.removeAll(r);
+				r.addAll(c);
+				c = r;
+				a++;
+				if (a == 1) {
+					index = i;
+				} else {
+					b = true;
+				}
+				bool = true;
+			}
+		}
+		if (!bool) {
+			result.add(c);
+		}
+		if (b) {
+			result.remove(index);
+		}
+	}
+	
+	private static boolean isIntersected (Set<Integer> o, Set<Integer> r) {
+		Set<Integer> set = new HashSet<>(o);
+		set.retainAll(r);
+		return !set.isEmpty();
+	}
+	
+	private static void addSet (List<Set<Integer>> origin, int a, int b) {
+		Set<Integer> set = new HashSet<>();
+        set.add(a);
+        set.add(b);
+        origin.add(set);
 	}
 
 	public static String md5(String plainText) {
@@ -553,8 +665,6 @@ public class HelloWorld {
 		Comparator<Map<String, Object>> comparator = new Comparator<Map<String, Object>>() {
 			@Override
 			public int compare(Map<String, Object> o1, Map<String, Object> o2) {
-				// return (int) (Long.valueOf(o1.get(property).toString()) -
-				// Long.valueOf(o2.get(property).toString()));
 				return Long.valueOf(o1.get(property).toString()).compareTo(Long.valueOf(o2.get(property).toString()));
 			}
 		};
@@ -564,4 +674,22 @@ public class HelloWorld {
         assert a > 0 : "something goes wrong here, a cannot be less than 0";
         System.out.println(a);
     }
+	
+	public static String object2Json(Object o) throws JsonProcessingException {
+        return OBJECT_MAPPER.writeValueAsString(o);
+    }
+	
+	public static <T>List<T> json2List(String json, Class<T> clazz) throws IOException {
+    	JavaType type = OBJECT_MAPPER.getTypeFactory().constructParametricType(List.class, clazz);
+		return OBJECT_MAPPER.readValue(json, type);
+    }
+	
+	public static Map<String, Object> json2Map(String json) throws IOException {
+        return OBJECT_MAPPER.readValue(json, new TypeReference<Map<String, Object>>(){});
+    }
+	
+	public static List<Map<String, Object>> json2MapList(String json) throws IOException {
+		return OBJECT_MAPPER.readValue(json, new TypeReference<List<Map<String, Object>>>() {
+		});
+	}
 }

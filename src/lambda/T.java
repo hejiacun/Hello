@@ -1,6 +1,5 @@
 package lambda;
 
-import com.jollycorp.worksheet.facade.customerService.SheetFacade;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +12,6 @@ import java.util.function.Predicate;
  **/
 public class T {
     public static void main(String[] args) {
-        SheetFacade sheetFacade;
         List<String> features = Arrays.asList("Lambdas", "Default Method", "Stream API", "Date and Time API");
         // Java 8之前：
         for (String feature : features) {

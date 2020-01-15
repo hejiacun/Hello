@@ -43,7 +43,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 //import com.google.common.collect.HashBasedTable;
 //import com.google.common.collect.Table;
 //
-import com.jolly.center.dubbo.enums.DynamicMenuEnum;
 import redis.clients.jedis.Jedis;
 
 import annotation.HelloAnnotation;
